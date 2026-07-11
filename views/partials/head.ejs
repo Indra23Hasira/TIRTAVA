@@ -11,10 +11,14 @@
 <body class="bg-slate-50 text-slate-800 min-h-screen flex">
 
 <% if (currentUser) { %>
-<aside class="w-60 bg-slate-900 text-slate-200 min-h-screen flex-shrink-0 hidden md:flex flex-col">
-  <div class="px-5 py-5 border-b border-slate-700">
-    <div class="font-bold text-lg text-white">💧 Depot ERP</div>
-    <div class="text-xs text-slate-400">Air Galon & Es Kristal</div>
+<div id="sidebarOverlay" class="hidden fixed inset-0 bg-black/50 z-40 md:hidden" onclick="toggleSidebar()"></div>
+<aside id="sidebar" class="w-64 bg-slate-900 text-slate-200 flex-shrink-0 hidden md:flex flex-col fixed md:static inset-y-0 left-0 z-50 h-screen">
+  <div class="px-5 py-5 border-b border-slate-700 flex justify-between items-center">
+    <div>
+      <div class="font-bold text-lg text-white">💧 Depot ERP</div>
+      <div class="text-xs text-slate-400">Air Galon & Es Kristal</div>
+    </div>
+    <button onclick="toggleSidebar()" class="md:hidden text-slate-400 text-2xl leading-none px-2">✕</button>
   </div>
   <nav class="flex-1 overflow-y-auto py-3 text-sm">
     <div class="px-4 pt-2 pb-1 text-xs uppercase tracking-wide text-slate-500">Utama</div>
@@ -60,9 +64,17 @@
 
 <main class="flex-1 min-h-screen">
   <% if (currentUser) { %>
-  <div class="md:hidden bg-slate-900 text-white px-4 py-3 flex justify-between items-center">
+  <div class="md:hidden bg-slate-900 text-white px-4 py-3 flex justify-between items-center sticky top-0 z-30">
+    <button onclick="toggleSidebar()" class="text-2xl leading-none px-1" aria-label="Buka menu">☰</button>
     <span class="font-bold">💧 Depot ERP</span>
     <a href="/logout" class="text-sm text-red-300">Keluar</a>
   </div>
+  <script>
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('hidden');
+      document.getElementById('sidebar').classList.toggle('flex');
+      document.getElementById('sidebarOverlay').classList.toggle('hidden');
+    }
+  </script>
   <% } %>
   <div class="p-4 md:p-8 max-w-7xl mx-auto">
