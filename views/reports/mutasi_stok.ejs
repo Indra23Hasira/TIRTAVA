@@ -1,0 +1,41 @@
+<%- include('../partials/head', { title: 'Mutasi Stok' }) %>
+<h1 class="text-xl font-bold mb-1">Laporan Mutasi Stok</h1>
+<p class="text-slate-500 text-sm mb-6">Periode <%= start %> s/d <%= end %></p>
+
+<form method="GET" class="card mb-6 flex flex-wrap gap-3 items-end">
+  <div>
+    <label class="text-xs text-slate-500">Produk</label>
+    <select name="product_id" class="form-input">
+      <% products.forEach(p => { %><option value="<%= p.id %>" <%= p.id === productId ? 'selected' : '' %>><%= p.name %></option><% }) %>
+    </select>
+  </div>
+  <div>
+    <label class="text-xs text-slate-500">Dari Tanggal</label>
+    <input type="date" name="start" value="<%= start %>" class="form-input">
+  </div>
+  <div>
+    <label class="text-xs text-slate-500">Sampai Tanggal</label>
+    <input type="date" name="end" value="<%= end %>" class="form-input">
+  </div>
+  <button class="btn btn-primary">Terapkan Filter</button>
+</form>
+
+<div class="card">
+  <table class="data-table w-full">
+    <thead><tr><th>Tanggal</th><th>Jenis</th><th>Qty</th><th>Saldo Setelah</th><th>Referensi</th><th>Keterangan</th></tr></thead>
+    <tbody>
+      <% movements.forEach(m => { %>
+      <tr>
+        <td><%= m.tanggal %></td>
+        <td><span class="badge <%= m.jenis === 'in' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600' %>"><%= m.jenis === 'in' ? 'Masuk' : 'Keluar' %></span></td>
+        <td><%= m.qty %></td>
+        <td><%= m.saldo_setelah %></td>
+        <td class="text-xs text-slate-500"><%= m.ref_tipe %></td>
+        <td class="text-xs"><%= m.keterangan %></td>
+      </tr>
+      <% }) %>
+      <% if (movements.length === 0) { %><tr><td colspan="6" class="text-center text-slate-400 py-6">Tidak ada mutasi pada periode ini.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('../partials/foot') %>

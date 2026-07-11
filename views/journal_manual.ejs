@@ -1,0 +1,65 @@
+<%- include('partials/head', { title: 'Jurnal Manual' }) %>
+<h1 class="text-xl font-bold mb-1">Jurnal Umum Manual</h1>
+<p class="text-slate-500 text-sm mb-6">Untuk penyesuaian non-transaksional. Total debit harus sama dengan total kredit.</p>
+
+<form method="POST" action="/journals/manual" class="card space-y-4">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <div>
+      <label class="text-sm font-medium">Tanggal</label>
+      <input type="date" name="tanggal" required value="<%= new Date().toISOString().slice(0,10) %>" class="form-input mt-1">
+    </div>
+    <div>
+      <label class="text-sm font-medium">Keterangan</label>
+      <input name="keterangan" required class="form-input mt-1" placeholder="Keterangan jurnal">
+    </div>
+  </div>
+
+  <table class="w-full text-sm">
+    <thead><tr class="text-left text-xs text-slate-500">
+      <th class="py-1">Akun</th><th class="py-1 w-32">Debit</th><th class="py-1 w-32">Kredit</th><th></th>
+    </tr></thead>
+    <tbody id="lineBody"></tbody>
+  </table>
+  <button type="button" onclick="addLine()" class="btn btn-secondary text-xs">+ Tambah Baris</button>
+
+  <div class="text-right text-sm">
+    <div>Total Debit: Rp <span id="totalDebit">0</span></div>
+    <div>Total Kredit: Rp <span id="totalKredit">0</span></div>
+    <div id="balanceWarning" class="text-red-600 font-medium hidden">⚠️ Debit dan kredit belum balance!</div>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Posting Jurnal</button>
+</form>
+
+<script>
+  const accounts = <%- JSON.stringify(accounts) %>;
+
+  function addLine() {
+    const tbody = document.getElementById('lineBody');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><select name="account_code" class="form-input">
+        ${accounts.map(a => `<option value="${a.code}">${a.code} - ${a.name}</option>`).join('')}
+      </select></td>
+      <td><input type="number" name="debit" step="0.01" value="0" class="form-input" oninput="recalc()"></td>
+      <td><input type="number" name="kredit" step="0.01" value="0" class="form-input" oninput="recalc()"></td>
+      <td><button type="button" onclick="this.closest('tr').remove(); recalc()" class="text-red-500 px-2">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+    recalc();
+  }
+
+  function recalc() {
+    let debit = 0, kredit = 0;
+    document.querySelectorAll('#lineBody tr').forEach(tr => {
+      debit += parseFloat(tr.querySelector('[name=debit]').value) || 0;
+      kredit += parseFloat(tr.querySelector('[name=kredit]').value) || 0;
+    });
+    document.getElementById('totalDebit').textContent = debit.toLocaleString('id-ID');
+    document.getElementById('totalKredit').textContent = kredit.toLocaleString('id-ID');
+    document.getElementById('balanceWarning').classList.toggle('hidden', Math.abs(debit - kredit) < 0.01);
+  }
+
+  addLine(); addLine();
+</script>
+<%- include('partials/foot') %>

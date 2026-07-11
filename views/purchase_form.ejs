@@ -1,0 +1,99 @@
+<%- include('partials/head', { title: 'Pembelian Baru' }) %>
+<h1 class="text-xl font-bold mb-1">Transaksi Pembelian Baru</h1>
+<p class="text-slate-500 text-sm mb-6">Stok, hutang, dan jurnal akan diperbarui otomatis saat disimpan.</p>
+
+<form method="POST" action="/purchases" class="card space-y-4">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+    <div>
+      <label class="text-sm font-medium">Supplier</label>
+      <select name="supplier_id" required class="form-input mt-1">
+        <% suppliers.forEach(s => { %><option value="<%= s.id %>"><%= s.name %></option><% }) %>
+      </select>
+    </div>
+    <div>
+      <label class="text-sm font-medium">Tanggal</label>
+      <input type="date" name="tanggal" required value="<%= new Date().toISOString().slice(0,10) %>" class="form-input mt-1">
+    </div>
+    <div>
+      <label class="text-sm font-medium">Jenis Bayar</label>
+      <select name="jenis_bayar" id="jenis_bayar" required class="form-input mt-1" onchange="toggleBayar()">
+        <option value="cash">Cash (Tunai)</option>
+        <option value="kredit">Kredit (Hutang)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <div id="akunWrap">
+      <label class="text-sm font-medium">Akun Sumber Dana</label>
+      <select name="akun_id" class="form-input mt-1">
+        <% accounts.forEach(a => { %><option value="<%= a.id %>"><%= a.nama %> (Rp <%= a.saldo.toLocaleString('id-ID') %>)</option><% }) %>
+      </select>
+    </div>
+    <div id="tempoWrap" class="hidden">
+      <label class="text-sm font-medium">Jatuh Tempo</label>
+      <input type="date" name="jatuh_tempo" class="form-input mt-1">
+    </div>
+  </div>
+
+  <hr>
+  <div>
+    <div class="flex justify-between items-center mb-2">
+      <label class="text-sm font-medium">Item Pembelian</label>
+      <button type="button" onclick="addRow()" class="btn btn-secondary text-xs">+ Tambah Baris</button>
+    </div>
+    <table class="w-full text-sm" id="itemTable">
+      <thead><tr class="text-left text-xs text-slate-500">
+        <th class="py-1">Produk</th><th class="py-1 w-28">Qty</th><th class="py-1 w-36">Harga Satuan</th><th class="py-1 w-36">Subtotal</th><th></th>
+      </tr></thead>
+      <tbody id="itemBody"></tbody>
+    </table>
+  </div>
+
+  <div class="text-right text-lg font-bold">Total: Rp <span id="grandTotal">0</span></div>
+
+  <button type="submit" class="btn btn-primary">Simpan & Posting Transaksi</button>
+</form>
+
+<script>
+  const products = <%- JSON.stringify(products) %>;
+
+  function addRow() {
+    const tbody = document.getElementById('itemBody');
+    const idx = tbody.children.length;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><select name="product_id" class="form-input" onchange="recalc()">
+        ${products.map(p => `<option value="${p.id}" data-harga="${p.hpp_rata2 || 0}">${p.name} (${p.unit})</option>`).join('')}
+      </select></td>
+      <td><input type="number" name="qty" step="0.01" value="1" class="form-input" oninput="recalc()"></td>
+      <td><input type="number" name="harga" step="0.01" value="0" class="form-input" oninput="recalc()"></td>
+      <td class="subtotal py-2 px-2">0</td>
+      <td><button type="button" onclick="this.closest('tr').remove(); recalc()" class="text-red-500 px-2">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+    recalc();
+  }
+
+  function recalc() {
+    let grand = 0;
+    document.querySelectorAll('#itemBody tr').forEach(tr => {
+      const qty = parseFloat(tr.querySelector('[name=qty]').value) || 0;
+      const harga = parseFloat(tr.querySelector('[name=harga]').value) || 0;
+      const subtotal = qty * harga;
+      tr.querySelector('.subtotal').textContent = subtotal.toLocaleString('id-ID');
+      grand += subtotal;
+    });
+    document.getElementById('grandTotal').textContent = grand.toLocaleString('id-ID');
+  }
+
+  function toggleBayar() {
+    const jenis = document.getElementById('jenis_bayar').value;
+    document.getElementById('akunWrap').classList.toggle('hidden', jenis !== 'cash');
+    document.getElementById('tempoWrap').classList.toggle('hidden', jenis !== 'kredit');
+  }
+
+  addRow();
+  toggleBayar();
+</script>
+<%- include('partials/foot') %>

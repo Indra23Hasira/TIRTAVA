@@ -1,0 +1,46 @@
+<%- include('partials/head', { title: 'Beban Operasional' }) %>
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-xl font-bold">Pengeluaran Operasional</h1>
+    <p class="text-slate-500 text-sm">Listrik, gaji, BBM, maintenance, dan beban lainnya</p>
+  </div>
+  <button onclick="document.getElementById('formNew').classList.toggle('hidden')" class="btn btn-primary">+ Catat Pengeluaran</button>
+</div>
+
+<div id="formNew" class="card mb-6 hidden">
+  <form method="POST" action="/expenses" class="grid grid-cols-2 md:grid-cols-5 gap-3">
+    <input type="date" name="tanggal" required value="<%= new Date().toISOString().slice(0,10) %>" class="form-input">
+    <select name="kategori" class="form-input">
+      <option value="listrik">Listrik</option>
+      <option value="gaji">Gaji</option>
+      <option value="bbm">BBM</option>
+      <option value="maintenance">Maintenance</option>
+      <option value="lainnya">Lainnya</option>
+    </select>
+    <input name="jumlah" type="number" step="0.01" placeholder="Jumlah" required class="form-input">
+    <select name="akun_id" class="form-input">
+      <% accounts.forEach(a => { %><option value="<%= a.id %>"><%= a.nama %></option><% }) %>
+    </select>
+    <input name="keterangan" placeholder="Keterangan" class="form-input">
+    <button class="btn btn-primary col-span-2 md:col-span-1">Simpan</button>
+  </form>
+</div>
+
+<div class="card">
+  <table class="data-table w-full">
+    <thead><tr><th>Tanggal</th><th>Kategori</th><th>Jumlah</th><th>Akun</th><th>Keterangan</th></tr></thead>
+    <tbody>
+      <% expenses.forEach(e => { %>
+      <tr>
+        <td><%= e.tanggal %></td>
+        <td><span class="badge bg-slate-100 text-slate-700"><%= e.kategori %></span></td>
+        <td>Rp <%= e.jumlah.toLocaleString('id-ID') %></td>
+        <td><%= e.akun_nama %></td>
+        <td class="text-xs"><%= e.keterangan %></td>
+      </tr>
+      <% }) %>
+      <% if (expenses.length === 0) { %><tr><td colspan="5" class="text-center text-slate-400 py-6">Belum ada pengeluaran.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('partials/foot') %>

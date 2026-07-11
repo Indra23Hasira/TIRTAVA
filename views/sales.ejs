@@ -1,0 +1,27 @@
+<%- include('partials/head', { title: 'Penjualan' }) %>
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-xl font-bold">Penjualan</h1>
+    <p class="text-slate-500 text-sm">Penjualan ke customer reguler & agen</p>
+  </div>
+  <a href="/sales/new" class="btn btn-primary">+ Transaksi Baru</a>
+</div>
+
+<div class="card">
+  <table class="data-table w-full">
+    <thead><tr><th>No. Transaksi</th><th>Tanggal</th><th>Customer</th><th>Jenis Bayar</th><th>Total</th></tr></thead>
+    <tbody>
+      <% sales.forEach(s => { %>
+      <tr>
+        <td><%= s.no_transaksi %></td>
+        <td><%= s.tanggal %></td>
+        <td><%= s.customer_name %></td>
+        <td><span class="badge <%= s.jenis_bayar === 'cash' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700' %>"><%= s.jenis_bayar %></span></td>
+        <td>Rp <%= s.total.toLocaleString('id-ID') %></td>
+      </tr>
+      <% }) %>
+      <% if (sales.length === 0) { %><tr><td colspan="5" class="text-center text-slate-400 py-6">Belum ada transaksi.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('partials/foot') %>

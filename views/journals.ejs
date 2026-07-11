@@ -1,0 +1,37 @@
+<%- include('partials/head', { title: 'Jurnal' }) %>
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-xl font-bold">Jurnal Akuntansi</h1>
+    <p class="text-slate-500 text-sm">Seluruh jurnal otomatis dari transaksi (audit trail) + jurnal umum manual</p>
+  </div>
+  <a href="/journals/manual" class="btn btn-primary">+ Jurnal Umum Manual</a>
+</div>
+
+<div class="space-y-3">
+  <% journals.forEach(j => { %>
+  <div class="card">
+    <div class="flex justify-between items-center mb-2">
+      <div>
+        <span class="font-semibold"><%= j.no_jurnal %></span>
+        <span class="text-slate-500 text-sm ml-2"><%= j.tanggal %></span>
+      </div>
+      <span class="badge bg-slate-100 text-slate-600"><%= j.ref_tipe %></span>
+    </div>
+    <p class="text-sm text-slate-600 mb-2"><%= j.keterangan %></p>
+    <table class="w-full text-sm">
+      <tbody>
+        <% (detailMap[j.id] || []).forEach(d => { %>
+        <tr>
+          <td class="py-1 text-slate-500 w-24"><%= d.code %></td>
+          <td class="py-1"><%= d.name %></td>
+          <td class="py-1 text-right w-32"><%= d.debit > 0 ? 'Rp ' + d.debit.toLocaleString('id-ID') : '' %></td>
+          <td class="py-1 text-right w-32"><%= d.kredit > 0 ? 'Rp ' + d.kredit.toLocaleString('id-ID') : '' %></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <% }) %>
+  <% if (journals.length === 0) { %><p class="text-center text-slate-400 py-6">Belum ada jurnal.</p><% } %>
+</div>
+<%- include('partials/foot') %>

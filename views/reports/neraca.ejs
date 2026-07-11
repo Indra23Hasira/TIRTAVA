@@ -1,0 +1,55 @@
+<%- include('../partials/head', { title: 'Neraca' }) %>
+<h1 class="text-xl font-bold mb-1">Neraca (Balance Sheet)</h1>
+<p class="text-slate-500 text-sm mb-6">Per tanggal <%= asOf %></p>
+
+<form method="GET" class="card mb-6 flex flex-wrap gap-3 items-end">
+  <div>
+    <label class="text-xs text-slate-500">Per Tanggal</label>
+    <input type="date" name="as_of" value="<%= asOf %>" class="form-input">
+  </div>
+  <button class="btn btn-primary">Terapkan</button>
+</form>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="card">
+    <h2 class="font-semibold mb-2 text-slate-700">Aset</h2>
+    <table class="w-full text-sm">
+      <% aset.forEach(r => { %>
+      <tr><td class="py-1"><%= r.name %></td><td class="py-1 text-right">Rp <%= Math.round(r.nilai).toLocaleString('id-ID') %></td></tr>
+      <% }) %>
+      <tr class="font-bold border-t"><td class="py-2">Total Aset</td><td class="py-2 text-right">Rp <%= Math.round(totalAset).toLocaleString('id-ID') %></td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2 class="font-semibold mb-2 text-slate-700">Kewajiban</h2>
+    <table class="w-full text-sm mb-4">
+      <% kewajiban.forEach(r => { %>
+      <tr><td class="py-1"><%= r.name %></td><td class="py-1 text-right">Rp <%= Math.round(r.nilai).toLocaleString('id-ID') %></td></tr>
+      <% }) %>
+      <tr class="font-semibold border-t"><td class="py-2">Total Kewajiban</td><td class="py-2 text-right">Rp <%= Math.round(totalKewajiban).toLocaleString('id-ID') %></td></tr>
+    </table>
+
+    <h2 class="font-semibold mb-2 text-slate-700">Ekuitas</h2>
+    <table class="w-full text-sm">
+      <% ekuitas.forEach(r => { %>
+      <tr><td class="py-1"><%= r.name %></td><td class="py-1 text-right">Rp <%= Math.round(r.nilai).toLocaleString('id-ID') %></td></tr>
+      <% }) %>
+      <tr><td class="py-1">Laba Berjalan</td><td class="py-1 text-right">Rp <%= Math.round(labaBerjalan).toLocaleString('id-ID') %></td></tr>
+      <tr class="font-bold border-t"><td class="py-2">Total Ekuitas</td><td class="py-2 text-right">Rp <%= Math.round(totalEkuitas).toLocaleString('id-ID') %></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="card max-w-md mt-4 <%= Math.abs(totalAset - (totalKewajiban + totalEkuitas)) < 1 ? 'border-green-300' : 'border-red-300' %>">
+  <div class="flex justify-between font-bold">
+    <span>Total Aset</span><span>Rp <%= Math.round(totalAset).toLocaleString('id-ID') %></span>
+  </div>
+  <div class="flex justify-between font-bold">
+    <span>Total Kewajiban + Ekuitas</span><span>Rp <%= Math.round(totalKewajiban + totalEkuitas).toLocaleString('id-ID') %></span>
+  </div>
+  <div class="text-center mt-2 text-sm <%= Math.abs(totalAset - (totalKewajiban + totalEkuitas)) < 1 ? 'text-green-600' : 'text-red-600' %>">
+    <%= Math.abs(totalAset - (totalKewajiban + totalEkuitas)) < 1 ? '✓ Balance' : '⚠ Tidak balance' %>
+  </div>
+</div>
+<%- include('../partials/foot') %>

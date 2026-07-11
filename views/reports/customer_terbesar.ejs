@@ -1,0 +1,24 @@
+<%- include('../partials/head', { title: 'Customer Terbesar' }) %>
+<h1 class="text-xl font-bold mb-1">Customer Terbesar</h1>
+<p class="text-slate-500 text-sm mb-6">Periode <%= start %> s/d <%= end %></p>
+
+<%- include('../partials/period_filter', { start, end }) %>
+
+<div class="card">
+  <table class="data-table w-full">
+    <thead><tr><th>#</th><th>Customer</th><th>Tipe</th><th>Jumlah Transaksi</th><th>Total Omzet</th></tr></thead>
+    <tbody>
+      <% rows.forEach((r, i) => { %>
+      <tr>
+        <td><%= i + 1 %></td>
+        <td><%= r.name %></td>
+        <td><span class="badge bg-blue-100 text-blue-700"><%= r.tipe %></span></td>
+        <td><%= r.jumlah_transaksi %></td>
+        <td>Rp <%= Math.round(r.total_omzet).toLocaleString('id-ID') %></td>
+      </tr>
+      <% }) %>
+      <% if (rows.length === 0) { %><tr><td colspan="5" class="text-center text-slate-400 py-6">Tidak ada penjualan pada periode ini.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('../partials/foot') %>

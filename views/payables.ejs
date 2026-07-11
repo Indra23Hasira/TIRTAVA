@@ -1,0 +1,50 @@
+<%- include('partials/head', { title: 'Hutang' }) %>
+<h1 class="text-xl font-bold mb-1">Hutang Usaha</h1>
+<p class="text-slate-500 text-sm mb-6">Daftar hutang belum lunas ke supplier, diurutkan berdasarkan jatuh tempo</p>
+
+<div class="card">
+  <table class="data-table w-full">
+    <thead><tr><th>Supplier</th><th>No. Transaksi</th><th>Tanggal</th><th>Jumlah</th><th>Sisa</th><th>Jatuh Tempo</th><th></th></tr></thead>
+    <tbody>
+      <% payables.forEach(p => { %>
+      <tr>
+        <td><%= p.supplier_name %></td>
+        <td><%= p.no_transaksi %></td>
+        <td><%= p.tanggal %></td>
+        <td>Rp <%= p.jumlah.toLocaleString('id-ID') %></td>
+        <td class="font-semibold">Rp <%= p.sisa.toLocaleString('id-ID') %></td>
+        <td>
+          <%= p.jatuh_tempo || '-' %>
+          <% if (p.overdue) { %><span class="badge bg-red-100 text-red-600 ml-1">Telat <%= p.days_overdue %> hr</span><% } %>
+        </td>
+        <td>
+          <button onclick="document.getElementById('pay<%= p.id %>').classList.toggle('hidden')" class="btn btn-secondary text-xs">Bayar</button>
+        </td>
+      </tr>
+      <tr id="pay<%= p.id %>" class="hidden">
+        <td colspan="7" class="bg-slate-50">
+          <form method="POST" action="/payables/<%= p.id %>/pay" class="flex gap-2 items-end p-2">
+            <div>
+              <label class="text-xs">Tanggal</label>
+              <input type="date" name="tanggal" value="<%= new Date().toISOString().slice(0,10) %>" class="form-input">
+            </div>
+            <div>
+              <label class="text-xs">Jumlah Bayar</label>
+              <input type="number" name="jumlah" step="0.01" max="<%= p.sisa %>" value="<%= p.sisa %>" required class="form-input">
+            </div>
+            <div>
+              <label class="text-xs">Bayar dari Akun</label>
+              <select name="akun_id" class="form-input">
+                <% accounts.forEach(a => { %><option value="<%= a.id %>"><%= a.nama %></option><% }) %>
+              </select>
+            </div>
+            <button class="btn btn-primary">Konfirmasi Pembayaran</button>
+          </form>
+        </td>
+      </tr>
+      <% }) %>
+      <% if (payables.length === 0) { %><tr><td colspan="7" class="text-center text-slate-400 py-6">Tidak ada hutang outstanding. 🎉</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('partials/foot') %>

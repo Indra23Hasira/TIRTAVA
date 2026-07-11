@@ -1,0 +1,106 @@
+<%- include('partials/head', { title: 'Dashboard' }) %>
+<h1 class="text-xl font-bold mb-1">Dashboard</h1>
+<p class="text-slate-500 text-sm mb-6">Ringkasan kondisi bisnis hari ini, <%= new Date().toLocaleDateString('id-ID', {weekday:'long', year:'numeric', month:'long', day:'numeric'}) %></p>
+
+<div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+  <div class="card">
+    <div class="text-xs text-slate-500 mb-1">Penjualan Hari Ini</div>
+    <div class="text-lg font-bold text-slate-800">Rp <%= penjualanHariIni.toLocaleString('id-ID') %></div>
+  </div>
+  <div class="card">
+    <div class="text-xs text-slate-500 mb-1">Total Kas & Bank</div>
+    <div class="text-lg font-bold text-blue-600">Rp <%= totalKas.toLocaleString('id-ID') %></div>
+  </div>
+  <div class="card">
+    <div class="text-xs text-slate-500 mb-1">Piutang Outstanding</div>
+    <div class="text-lg font-bold text-amber-600">Rp <%= totalPiutang.toLocaleString('id-ID') %></div>
+  </div>
+  <div class="card">
+    <div class="text-xs text-slate-500 mb-1">Hutang Outstanding</div>
+    <div class="text-lg font-bold text-red-600">Rp <%= totalHutang.toLocaleString('id-ID') %></div>
+  </div>
+  <div class="card">
+    <div class="text-xs text-slate-500 mb-1">Laba Kotor Bulan Ini</div>
+    <div class="text-lg font-bold text-green-600">Rp <%= labaKotorBulanIni.toLocaleString('id-ID') %></div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+  <div class="card lg:col-span-2">
+    <h2 class="font-semibold mb-3">Tren Penjualan 30 Hari</h2>
+    <canvas id="trendChart" height="90"></canvas>
+  </div>
+  <div class="card">
+    <h2 class="font-semibold mb-3">⚠️ Stok Kritis</h2>
+    <% if (stokKritis.length === 0) { %>
+      <p class="text-sm text-slate-400">Semua stok aman.</p>
+    <% } %>
+    <ul class="space-y-2 text-sm">
+      <% stokKritis.forEach(p => { %>
+      <li class="flex justify-between">
+        <span><%= p.name %></span>
+        <span class="font-medium text-red-600"><%= p.stok %> <%= p.unit %></span>
+      </li>
+      <% }) %>
+    </ul>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+  <div class="card">
+    <h2 class="font-semibold mb-3">📥 Piutang Jatuh Tempo Terdekat</h2>
+    <ul class="space-y-2 text-sm">
+      <% piutangJatuhTempo.forEach(r => { %>
+      <li class="flex justify-between">
+        <span><%= r.customer_name %></span>
+        <span class="font-medium">Rp <%= r.sisa.toLocaleString('id-ID') %></span>
+      </li>
+      <% }) %>
+      <% if (piutangJatuhTempo.length === 0) { %><p class="text-slate-400">Tidak ada piutang.</p><% } %>
+    </ul>
+  </div>
+  <div class="card">
+    <h2 class="font-semibold mb-3">⭐ Customer Terbesar (Bulan Ini)</h2>
+    <ul class="space-y-2 text-sm">
+      <% customerTerbesar.forEach(c => { %>
+      <li class="flex justify-between">
+        <span><%= c.name %></span>
+        <span class="font-medium">Rp <%= c.total.toLocaleString('id-ID') %></span>
+      </li>
+      <% }) %>
+      <% if (customerTerbesar.length === 0) { %><p class="text-slate-400">Belum ada data.</p><% } %>
+    </ul>
+  </div>
+  <div class="card">
+    <h2 class="font-semibold mb-3">🏆 Produk Terlaris (Bulan Ini)</h2>
+    <ul class="space-y-2 text-sm">
+      <% produkTerlaris.forEach(p => { %>
+      <li class="flex justify-between">
+        <span><%= p.name %></span>
+        <span class="font-medium"><%= p.qty %> unit</span>
+      </li>
+      <% }) %>
+      <% if (produkTerlaris.length === 0) { %><p class="text-slate-400">Belum ada data.</p><% } %>
+    </ul>
+  </div>
+</div>
+
+<script>
+  const trend = <%- JSON.stringify(trend) %>;
+  new Chart(document.getElementById('trendChart'), {
+    type: 'line',
+    data: {
+      labels: trend.map(t => t.tanggal),
+      datasets: [{
+        label: 'Penjualan',
+        data: trend.map(t => t.total),
+        borderColor: '#2563eb',
+        backgroundColor: 'rgba(37,99,235,0.1)',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: { plugins: { legend: { display: false } } }
+  });
+</script>
+<%- include('partials/foot') %>

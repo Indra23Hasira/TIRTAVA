@@ -1,0 +1,40 @@
+<%- include('partials/head', { title: 'Customer' }) %>
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-xl font-bold">Master Customer</h1>
+    <p class="text-slate-500 text-sm">Customer reguler & agen/reseller</p>
+  </div>
+  <button onclick="document.getElementById('formNew').classList.toggle('hidden')" class="btn btn-primary">+ Tambah Customer</button>
+</div>
+
+<div id="formNew" class="card mb-6 hidden">
+  <form method="POST" action="/customers" class="grid grid-cols-2 md:grid-cols-5 gap-3">
+    <input name="code" placeholder="Kode (mis. CUST-003)" required class="form-input">
+    <input name="name" placeholder="Nama Customer" required class="form-input">
+    <input name="phone" placeholder="No. Telepon" class="form-input">
+    <input name="address" placeholder="Alamat" class="form-input">
+    <select name="tipe" class="form-input">
+      <option value="reguler">Reguler</option>
+      <option value="agen">Agen</option>
+    </select>
+    <button class="btn btn-primary">Simpan</button>
+  </form>
+</div>
+
+<div class="card">
+  <table class="data-table w-full">
+    <thead><tr><th>Kode</th><th>Nama</th><th>Telepon</th><th>Tipe</th><th>Saldo Piutang</th></tr></thead>
+    <tbody>
+      <% customers.forEach(c => { %>
+      <tr>
+        <td><%= c.code %></td>
+        <td><%= c.name %></td>
+        <td><%= c.phone %></td>
+        <td><span class="badge bg-blue-100 text-blue-700"><%= c.tipe %></span></td>
+        <td class="<%= c.saldo_piutang > 0 ? 'text-amber-600 font-semibold' : '' %>">Rp <%= c.saldo_piutang.toLocaleString('id-ID') %></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<%- include('partials/foot') %>

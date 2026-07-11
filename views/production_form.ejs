@@ -1,0 +1,103 @@
+<%- include('partials/head', { title: 'Produksi Baru' }) %>
+<h1 class="text-xl font-bold mb-1">Transaksi Produksi Baru</h1>
+<p class="text-slate-500 text-sm mb-6">HPP dihitung otomatis dari bahan baku terpakai + biaya produksi, lalu stok barang jadi bertambah.</p>
+
+<form method="POST" action="/productions" class="card space-y-4">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+    <div>
+      <label class="text-sm font-medium">Produk Hasil (Barang Jadi)</label>
+      <select name="product_id" required class="form-input mt-1">
+        <% finishedGoods.forEach(p => { %><option value="<%= p.id %>"><%= p.name %> (<%= p.unit %>)</option><% }) %>
+      </select>
+    </div>
+    <div>
+      <label class="text-sm font-medium">Qty Hasil Produksi</label>
+      <input type="number" name="qty_hasil" step="0.01" required class="form-input mt-1">
+    </div>
+    <div>
+      <label class="text-sm font-medium">Tanggal</label>
+      <input type="date" name="tanggal" required value="<%= new Date().toISOString().slice(0,10) %>" class="form-input mt-1">
+    </div>
+  </div>
+
+  <hr>
+  <div>
+    <div class="flex justify-between items-center mb-2">
+      <label class="text-sm font-medium">Bahan Baku Terpakai</label>
+      <button type="button" onclick="addRow()" class="btn btn-secondary text-xs">+ Tambah Bahan</button>
+    </div>
+    <table class="w-full text-sm">
+      <thead><tr class="text-left text-xs text-slate-500">
+        <th class="py-1">Bahan Baku</th><th class="py-1 w-28">Qty Terpakai</th><th class="py-1 w-32">HPP Satuan</th><th class="py-1 w-32">Subtotal</th><th></th>
+      </tr></thead>
+      <tbody id="itemBody"></tbody>
+    </table>
+  </div>
+
+  <hr>
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+    <div>
+      <label class="text-sm font-medium">Biaya Tenaga Kerja</label>
+      <input type="number" name="biaya_tenaga_kerja" step="0.01" value="0" class="form-input mt-1" oninput="recalc()">
+    </div>
+    <div>
+      <label class="text-sm font-medium">Biaya Listrik</label>
+      <input type="number" name="biaya_listrik" step="0.01" value="0" class="form-input mt-1" oninput="recalc()">
+    </div>
+    <div>
+      <label class="text-sm font-medium">Biaya Overhead Lain</label>
+      <input type="number" name="biaya_overhead" step="0.01" value="0" class="form-input mt-1" oninput="recalc()">
+    </div>
+    <div>
+      <label class="text-sm font-medium">Dibayar dari Akun</label>
+      <select name="akun_id" class="form-input mt-1">
+        <% accounts.forEach(a => { %><option value="<%= a.id %>"><%= a.nama %></option><% }) %>
+      </select>
+    </div>
+  </div>
+  <p class="text-xs text-slate-500">Biaya tenaga kerja/listrik/overhead dianggap dibayar tunai saat produksi dan langsung dikapitalisasi ke HPP barang jadi.</p>
+
+  <div class="text-right text-lg font-bold">Estimasi Total HPP: Rp <span id="grandTotal">0</span></div>
+
+  <button type="submit" class="btn btn-primary">Simpan & Posting Produksi</button>
+</form>
+
+<script>
+  const materials = <%- JSON.stringify(materials) %>;
+
+  function addRow() {
+    const tbody = document.getElementById('itemBody');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><select name="material_id" class="form-input" onchange="recalc()">
+        ${materials.map(m => `<option value="${m.id}" data-harga="${m.hpp_rata2 || 0}" data-stok="${m.stok}">${m.name} (stok: ${m.stok} ${m.unit})</option>`).join('')}
+      </select></td>
+      <td><input type="number" name="material_qty" step="0.01" value="1" class="form-input" oninput="recalc()"></td>
+      <td class="hpp-satuan py-2 px-2">0</td>
+      <td class="subtotal py-2 px-2">0</td>
+      <td><button type="button" onclick="this.closest('tr').remove(); recalc()" class="text-red-500 px-2">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+    recalc();
+  }
+
+  function recalc() {
+    let bahanTotal = 0;
+    document.querySelectorAll('#itemBody tr').forEach(tr => {
+      const select = tr.querySelector('[name=material_id]');
+      const harga = parseFloat(select.selectedOptions[0]?.dataset.harga || 0);
+      const qty = parseFloat(tr.querySelector('[name=material_qty]').value) || 0;
+      const subtotal = qty * harga;
+      tr.querySelector('.hpp-satuan').textContent = harga.toLocaleString('id-ID');
+      tr.querySelector('.subtotal').textContent = subtotal.toLocaleString('id-ID');
+      bahanTotal += subtotal;
+    });
+    const biaya = (parseFloat(document.querySelector('[name=biaya_tenaga_kerja]').value) || 0)
+      + (parseFloat(document.querySelector('[name=biaya_listrik]').value) || 0)
+      + (parseFloat(document.querySelector('[name=biaya_overhead]').value) || 0);
+    document.getElementById('grandTotal').textContent = (bahanTotal + biaya).toLocaleString('id-ID');
+  }
+
+  addRow();
+</script>
+<%- include('partials/foot') %>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= typeof title !== 'undefined' ? title + ' - Depot ERP' : 'Depot ERP' %></title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex">
+
+<% if (currentUser) { %>
+<aside class="w-60 bg-slate-900 text-slate-200 min-h-screen flex-shrink-0 hidden md:flex flex-col">
+  <div class="px-5 py-5 border-b border-slate-700">
+    <div class="font-bold text-lg text-white">💧 Depot ERP</div>
+    <div class="text-xs text-slate-400">Air Galon & Es Kristal</div>
+  </div>
+  <nav class="flex-1 overflow-y-auto py-3 text-sm">
+    <div class="px-4 pt-2 pb-1 text-xs uppercase tracking-wide text-slate-500">Utama</div>
+    <a href="/" class="nav-link <%= path==='/' ? 'active' : '' %>">📊 Dashboard</a>
+
+    <div class="px-4 pt-3 pb-1 text-xs uppercase tracking-wide text-slate-500">Master Data</div>
+    <a href="/products" class="nav-link <%= path==='/products' ? 'active' : '' %>">📦 Produk</a>
+    <a href="/customers" class="nav-link <%= path==='/customers' ? 'active' : '' %>">🧑‍🤝‍🧑 Customer</a>
+    <a href="/suppliers" class="nav-link <%= path==='/suppliers' ? 'active' : '' %>">🚚 Supplier</a>
+    <a href="/users" class="nav-link <%= path==='/users' ? 'active' : '' %>">👤 User</a>
+
+    <div class="px-4 pt-3 pb-1 text-xs uppercase tracking-wide text-slate-500">Operasional</div>
+    <a href="/purchases" class="nav-link <%= path==='/purchases' ? 'active' : '' %>">🛒 Pembelian</a>
+    <a href="/productions" class="nav-link <%= path==='/productions' ? 'active' : '' %>">🏭 Produksi</a>
+    <a href="/stock" class="nav-link <%= path==='/stock' ? 'active' : '' %>">📋 Persediaan/Stok</a>
+    <a href="/sales" class="nav-link <%= path==='/sales' ? 'active' : '' %>">💰 Penjualan</a>
+
+    <div class="px-4 pt-3 pb-1 text-xs uppercase tracking-wide text-slate-500">Keuangan</div>
+    <a href="/cashbank" class="nav-link <%= path==='/cashbank' ? 'active' : '' %>">🏦 Kas & Bank</a>
+    <a href="/receivables" class="nav-link <%= path==='/receivables' ? 'active' : '' %>">📥 Piutang</a>
+    <a href="/payables" class="nav-link <%= path==='/payables' ? 'active' : '' %>">📤 Hutang</a>
+    <a href="/expenses" class="nav-link <%= path==='/expenses' ? 'active' : '' %>">🧾 Beban Operasional</a>
+    <a href="/assets" class="nav-link <%= path==='/assets' ? 'active' : '' %>">🏷️ Aset Tetap</a>
+    <a href="/journals" class="nav-link <%= path==='/journals' ? 'active' : '' %>">📚 Jurnal</a>
+
+    <div class="px-4 pt-3 pb-1 text-xs uppercase tracking-wide text-slate-500">Laporan</div>
+    <a href="/reports/laba-rugi" class="nav-link <%= path==='/reports/laba-rugi' ? 'active' : '' %>">📈 Laba Rugi</a>
+    <a href="/reports/neraca" class="nav-link <%= path==='/reports/neraca' ? 'active' : '' %>">⚖️ Neraca</a>
+    <a href="/reports/arus-kas" class="nav-link <%= path==='/reports/arus-kas' ? 'active' : '' %>">💵 Arus Kas</a>
+    <a href="/reports/mutasi-stok" class="nav-link <%= path==='/reports/mutasi-stok' ? 'active' : '' %>">🔄 Mutasi Stok</a>
+    <a href="/reports/hpp" class="nav-link <%= path==='/reports/hpp' ? 'active' : '' %>">🧮 HPP</a>
+    <a href="/reports/produk-terlaris" class="nav-link <%= path==='/reports/produk-terlaris' ? 'active' : '' %>">🏆 Produk Terlaris</a>
+    <a href="/reports/customer-terbesar" class="nav-link <%= path==='/reports/customer-terbesar' ? 'active' : '' %>">⭐ Customer Terbesar</a>
+  </nav>
+  <div class="border-t border-slate-700 px-4 py-3 text-xs">
+    <div class="text-white font-medium"><%= currentUser.name %></div>
+    <div class="text-slate-400 mb-2"><%= currentUser.role %></div>
+    <a href="/account/devices" class="block text-blue-400 hover:underline mb-1">Perangkat aktif</a>
+    <a href="/logout" class="block text-red-400 hover:underline">Keluar</a>
+  </div>
+</aside>
+<% } %>
+
+<main class="flex-1 min-h-screen">
+  <% if (currentUser) { %>
+  <div class="md:hidden bg-slate-900 text-white px-4 py-3 flex justify-between items-center">
+    <span class="font-bold">💧 Depot ERP</span>
+    <a href="/logout" class="text-sm text-red-300">Keluar</a>
+  </div>
+  <% } %>
+  <div class="p-4 md:p-8 max-w-7xl mx-auto">

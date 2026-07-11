@@ -1,0 +1,25 @@
+<%- include('../partials/head', { title: 'HPP' }) %>
+<h1 class="text-xl font-bold mb-1">Laporan HPP per Produksi</h1>
+<p class="text-slate-500 text-sm mb-6">Periode <%= start %> s/d <%= end %></p>
+
+<%- include('../partials/period_filter', { start, end }) %>
+
+<div class="card">
+  <table class="data-table w-full">
+    <thead><tr><th>No. Produksi</th><th>Tanggal</th><th>Produk</th><th>Qty Hasil</th><th>Total HPP</th><th>HPP per Unit</th></tr></thead>
+    <tbody>
+      <% rows.forEach(r => { %>
+      <tr>
+        <td><%= r.no_produksi %></td>
+        <td><%= r.tanggal %></td>
+        <td><%= r.product_name %></td>
+        <td><%= r.qty_hasil %></td>
+        <td>Rp <%= Math.round(r.total_hpp).toLocaleString('id-ID') %></td>
+        <td>Rp <%= Math.round(r.hpp_per_unit).toLocaleString('id-ID') %></td>
+      </tr>
+      <% }) %>
+      <% if (rows.length === 0) { %><tr><td colspan="6" class="text-center text-slate-400 py-6">Tidak ada produksi pada periode ini.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('../partials/foot') %>

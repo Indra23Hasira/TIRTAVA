@@ -1,0 +1,65 @@
+.nav-link {
+  display: block;
+  padding: 8px 20px;
+  color: #cbd5e1;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+}
+.nav-link:hover {
+  background: rgba(255,255,255,0.05);
+  color: white;
+}
+.nav-link.active {
+  background: rgba(59,130,246,0.15);
+  color: #60a5fa;
+  border-left-color: #3b82f6;
+  font-weight: 600;
+}
+table.data-table th {
+  text-align: left;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 10px 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+table.data-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+}
+table.data-table tr:hover td { background: #f8fafc; }
+.card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 20px;
+}
+.btn {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.btn-primary { background: #2563eb; color: white; }
+.btn-primary:hover { background: #1d4ed8; }
+.btn-secondary { background: #e2e8f0; color: #334155; }
+.btn-secondary:hover { background: #cbd5e1; }
+.btn-danger { background: #fee2e2; color: #b91c1c; }
+.form-input {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 12px;
+  width: 100%;
+  font-size: 14px;
+}
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}

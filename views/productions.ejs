@@ -1,0 +1,28 @@
+<%- include('partials/head', { title: 'Produksi' }) %>
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-xl font-bold">Produksi</h1>
+    <p class="text-slate-500 text-sm">Isi ulang air galon & cetak es kristal</p>
+  </div>
+  <a href="/productions/new" class="btn btn-primary">+ Produksi Baru</a>
+</div>
+
+<div class="card">
+  <table class="data-table w-full">
+    <thead><tr><th>No. Produksi</th><th>Tanggal</th><th>Produk</th><th>Qty Hasil</th><th>Total HPP</th><th>HPP/Unit</th></tr></thead>
+    <tbody>
+      <% productions.forEach(p => { %>
+      <tr>
+        <td><%= p.no_produksi %></td>
+        <td><%= p.tanggal %></td>
+        <td><%= p.product_name %></td>
+        <td><%= p.qty_hasil %> <%= p.unit %></td>
+        <td>Rp <%= Math.round(p.total_hpp).toLocaleString('id-ID') %></td>
+        <td>Rp <%= Math.round(p.hpp_per_unit).toLocaleString('id-ID') %></td>
+      </tr>
+      <% }) %>
+      <% if (productions.length === 0) { %><tr><td colspan="6" class="text-center text-slate-400 py-6">Belum ada produksi.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('partials/foot') %>

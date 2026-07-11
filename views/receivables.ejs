@@ -1,0 +1,50 @@
+<%- include('partials/head', { title: 'Piutang' }) %>
+<h1 class="text-xl font-bold mb-1">Piutang Usaha</h1>
+<p class="text-slate-500 text-sm mb-6">Daftar piutang belum lunas, diurutkan berdasarkan jatuh tempo</p>
+
+<div class="card">
+  <table class="data-table w-full">
+    <thead><tr><th>Customer</th><th>No. Transaksi</th><th>Tanggal</th><th>Jumlah</th><th>Sisa</th><th>Jatuh Tempo</th><th></th></tr></thead>
+    <tbody>
+      <% receivables.forEach(r => { %>
+      <tr>
+        <td><%= r.customer_name %></td>
+        <td><%= r.no_transaksi %></td>
+        <td><%= r.tanggal %></td>
+        <td>Rp <%= r.jumlah.toLocaleString('id-ID') %></td>
+        <td class="font-semibold">Rp <%= r.sisa.toLocaleString('id-ID') %></td>
+        <td>
+          <%= r.jatuh_tempo || '-' %>
+          <% if (r.overdue) { %><span class="badge bg-red-100 text-red-600 ml-1">Telat <%= r.days_overdue %> hr</span><% } %>
+        </td>
+        <td>
+          <button onclick="document.getElementById('pay<%= r.id %>').classList.toggle('hidden')" class="btn btn-secondary text-xs">Bayar</button>
+        </td>
+      </tr>
+      <tr id="pay<%= r.id %>" class="hidden">
+        <td colspan="7" class="bg-slate-50">
+          <form method="POST" action="/receivables/<%= r.id %>/pay" class="flex gap-2 items-end p-2">
+            <div>
+              <label class="text-xs">Tanggal</label>
+              <input type="date" name="tanggal" value="<%= new Date().toISOString().slice(0,10) %>" class="form-input">
+            </div>
+            <div>
+              <label class="text-xs">Jumlah Bayar</label>
+              <input type="number" name="jumlah" step="0.01" max="<%= r.sisa %>" value="<%= r.sisa %>" required class="form-input">
+            </div>
+            <div>
+              <label class="text-xs">Terima di Akun</label>
+              <select name="akun_id" class="form-input">
+                <% accounts.forEach(a => { %><option value="<%= a.id %>"><%= a.nama %></option><% }) %>
+              </select>
+            </div>
+            <button class="btn btn-primary">Konfirmasi Pelunasan</button>
+          </form>
+        </td>
+      </tr>
+      <% }) %>
+      <% if (receivables.length === 0) { %><tr><td colspan="7" class="text-center text-slate-400 py-6">Tidak ada piutang outstanding. 🎉</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('partials/foot') %>

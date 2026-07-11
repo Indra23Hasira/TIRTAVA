@@ -1,0 +1,50 @@
+<%- include('partials/head', { title: 'Kas & Bank' }) %>
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-xl font-bold">Kas & Bank</h1>
+    <p class="text-slate-500 text-sm">Saldo dan mutasi seluruh akun kas/bank</p>
+  </div>
+  <button onclick="document.getElementById('formNew').classList.toggle('hidden')" class="btn btn-primary">+ Tambah Akun</button>
+</div>
+
+<div id="formNew" class="card mb-6 hidden">
+  <form method="POST" action="/cashbank/accounts" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <input name="nama" placeholder="Nama Akun (mis. Bank Mandiri)" required class="form-input">
+    <select name="jenis" class="form-input">
+      <option value="kas">Kas</option>
+      <option value="bank">Bank</option>
+    </select>
+    <input name="saldo" type="number" step="0.01" placeholder="Saldo Awal" class="form-input">
+    <button class="btn btn-primary">Simpan</button>
+  </form>
+</div>
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+  <% accounts.forEach(a => { %>
+  <div class="card">
+    <div class="text-xs text-slate-500 mb-1"><%= a.jenis === 'kas' ? '💵' : '🏦' %> <%= a.nama %></div>
+    <div class="text-lg font-bold text-slate-800">Rp <%= a.saldo.toLocaleString('id-ID') %></div>
+  </div>
+  <% }) %>
+</div>
+
+<div class="card">
+  <h2 class="font-semibold mb-3">Mutasi Terakhir</h2>
+  <table class="data-table w-full">
+    <thead><tr><th>Tanggal</th><th>Akun</th><th>Jenis</th><th>Jumlah</th><th>Referensi</th><th>Keterangan</th></tr></thead>
+    <tbody>
+      <% mutations.forEach(m => { %>
+      <tr>
+        <td><%= m.tanggal %></td>
+        <td><%= m.akun_nama %></td>
+        <td><span class="badge <%= m.jenis === 'masuk' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600' %>"><%= m.jenis %></span></td>
+        <td>Rp <%= m.jumlah.toLocaleString('id-ID') %></td>
+        <td class="text-xs text-slate-500"><%= m.ref_tipe %></td>
+        <td class="text-xs"><%= m.keterangan %></td>
+      </tr>
+      <% }) %>
+      <% if (mutations.length === 0) { %><tr><td colspan="6" class="text-center text-slate-400 py-6">Belum ada mutasi.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('partials/foot') %>

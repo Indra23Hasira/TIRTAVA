@@ -1,0 +1,33 @@
+<%- include('../partials/head', { title: 'Produk Terlaris' }) %>
+<h1 class="text-xl font-bold mb-1">Produk Terlaris</h1>
+<p class="text-slate-500 text-sm mb-6">Periode <%= start %> s/d <%= end %></p>
+
+<%- include('../partials/period_filter', { start, end }) %>
+
+<div class="card">
+  <canvas id="chart" height="80" class="mb-6"></canvas>
+  <table class="data-table w-full">
+    <thead><tr><th>#</th><th>Produk</th><th>Qty Terjual</th><th>Total Omzet</th></tr></thead>
+    <tbody>
+      <% rows.forEach((r, i) => { %>
+      <tr>
+        <td><%= i + 1 %></td>
+        <td><%= r.name %></td>
+        <td><%= r.total_qty %> <%= r.unit %></td>
+        <td>Rp <%= Math.round(r.total_omzet).toLocaleString('id-ID') %></td>
+      </tr>
+      <% }) %>
+      <% if (rows.length === 0) { %><tr><td colspan="4" class="text-center text-slate-400 py-6">Tidak ada penjualan pada periode ini.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  const rows = <%- JSON.stringify(rows) %>;
+  new Chart(document.getElementById('chart'), {
+    type: 'bar',
+    data: { labels: rows.map(r => r.name), datasets: [{ label: 'Qty Terjual', data: rows.map(r => r.total_qty), backgroundColor: '#3b82f6' }] },
+    options: { plugins: { legend: { display: false } } }
+  });
+</script>
+<%- include('../partials/foot') %>

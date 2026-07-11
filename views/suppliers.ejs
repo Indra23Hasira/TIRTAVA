@@ -1,0 +1,35 @@
+<%- include('partials/head', { title: 'Supplier' }) %>
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-xl font-bold">Master Supplier</h1>
+    <p class="text-slate-500 text-sm">Pemasok bahan baku dan kemasan</p>
+  </div>
+  <button onclick="document.getElementById('formNew').classList.toggle('hidden')" class="btn btn-primary">+ Tambah Supplier</button>
+</div>
+
+<div id="formNew" class="card mb-6 hidden">
+  <form method="POST" action="/suppliers" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <input name="code" placeholder="Kode (mis. SUP-003)" required class="form-input">
+    <input name="name" placeholder="Nama Supplier" required class="form-input">
+    <input name="phone" placeholder="No. Telepon" class="form-input">
+    <input name="address" placeholder="Alamat" class="form-input">
+    <button class="btn btn-primary">Simpan</button>
+  </form>
+</div>
+
+<div class="card">
+  <table class="data-table w-full">
+    <thead><tr><th>Kode</th><th>Nama</th><th>Telepon</th><th>Saldo Hutang</th></tr></thead>
+    <tbody>
+      <% suppliers.forEach(s => { %>
+      <tr>
+        <td><%= s.code %></td>
+        <td><%= s.name %></td>
+        <td><%= s.phone %></td>
+        <td class="<%= s.saldo_hutang > 0 ? 'text-red-600 font-semibold' : '' %>">Rp <%= s.saldo_hutang.toLocaleString('id-ID') %></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<%- include('partials/foot') %>

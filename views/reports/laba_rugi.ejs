@@ -1,0 +1,29 @@
+<%- include('../partials/head', { title: 'Laba Rugi' }) %>
+<h1 class="text-xl font-bold mb-1">Laporan Laba Rugi</h1>
+<p class="text-slate-500 text-sm mb-6">Periode <%= start %> s/d <%= end %></p>
+
+<%- include('../partials/period_filter', { start, end }) %>
+
+<div class="card max-w-2xl">
+  <h2 class="font-semibold mb-2 text-slate-700">Pendapatan</h2>
+  <table class="w-full text-sm mb-4">
+    <% pendapatan.forEach(r => { %>
+    <tr><td class="py-1"><%= r.name %></td><td class="py-1 text-right">Rp <%= Math.round(r.nilai).toLocaleString('id-ID') %></td></tr>
+    <% }) %>
+    <tr class="font-semibold border-t"><td class="py-2">Total Pendapatan</td><td class="py-2 text-right">Rp <%= Math.round(totalPendapatan).toLocaleString('id-ID') %></td></tr>
+  </table>
+
+  <h2 class="font-semibold mb-2 text-slate-700">Beban (termasuk HPP)</h2>
+  <table class="w-full text-sm mb-4">
+    <% beban.forEach(r => { %>
+    <tr><td class="py-1"><%= r.name %></td><td class="py-1 text-right">Rp <%= Math.round(r.nilai).toLocaleString('id-ID') %></td></tr>
+    <% }) %>
+    <tr class="font-semibold border-t"><td class="py-2">Total Beban</td><td class="py-2 text-right">Rp <%= Math.round(totalBeban).toLocaleString('id-ID') %></td></tr>
+  </table>
+
+  <div class="border-t-2 pt-3 flex justify-between text-lg font-bold <%= labaBersih >= 0 ? 'text-green-600' : 'text-red-600' %>">
+    <span>Laba Bersih</span>
+    <span>Rp <%= Math.round(labaBersih).toLocaleString('id-ID') %></span>
+  </div>
+</div>
+<%- include('../partials/foot') %>

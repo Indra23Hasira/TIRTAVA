@@ -1,0 +1,45 @@
+<%- include('partials/head', { title: 'Aset Tetap' }) %>
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-xl font-bold">Aset Tetap</h1>
+    <p class="text-slate-500 text-sm">Mesin, kendaraan, peralatan produksi — dengan penyusutan garis lurus</p>
+  </div>
+  <button onclick="document.getElementById('formNew').classList.toggle('hidden')" class="btn btn-primary">+ Tambah Aset</button>
+</div>
+
+<div id="formNew" class="card mb-6 hidden">
+  <form method="POST" action="/assets" class="grid grid-cols-2 md:grid-cols-5 gap-3">
+    <input name="nama" placeholder="Nama Aset (mis. Mesin RO)" required class="form-input">
+    <input name="kategori" placeholder="Kategori" class="form-input">
+    <input type="date" name="tanggal_beli" required class="form-input">
+    <input name="harga_beli" type="number" step="0.01" placeholder="Harga Beli" required class="form-input">
+    <input name="umur_bulan" type="number" placeholder="Umur (bulan)" required class="form-input">
+    <input name="nilai_residu" type="number" step="0.01" placeholder="Nilai Residu" class="form-input">
+    <button class="btn btn-primary">Simpan</button>
+  </form>
+</div>
+
+<div class="card">
+  <table class="data-table w-full">
+    <thead><tr><th>Nama</th><th>Kategori</th><th>Tgl Beli</th><th>Harga Beli</th><th>Akum. Penyusutan</th><th>Nilai Buku</th><th></th></tr></thead>
+    <tbody>
+      <% assets.forEach(a => { %>
+      <tr>
+        <td><%= a.nama %></td>
+        <td><%= a.kategori %></td>
+        <td><%= a.tanggal_beli %></td>
+        <td>Rp <%= a.harga_beli.toLocaleString('id-ID') %></td>
+        <td>Rp <%= Math.round(a.akumulasi_penyusutan).toLocaleString('id-ID') %></td>
+        <td>Rp <%= Math.round(a.harga_beli - a.akumulasi_penyusutan).toLocaleString('id-ID') %></td>
+        <td>
+          <form method="POST" action="/assets/<%= a.id %>/depreciate">
+            <button class="btn btn-secondary text-xs">Posting Penyusutan Bulan Ini</button>
+          </form>
+        </td>
+      </tr>
+      <% }) %>
+      <% if (assets.length === 0) { %><tr><td colspan="7" class="text-center text-slate-400 py-6">Belum ada aset tetap.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('partials/foot') %>

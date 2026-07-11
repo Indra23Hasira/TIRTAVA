@@ -1,0 +1,46 @@
+<%- include('partials/head', { title: 'User' }) %>
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-xl font-bold">Master User</h1>
+    <p class="text-slate-500 text-sm">Akun login untuk staff (email + password)</p>
+  </div>
+  <button onclick="document.getElementById('formNew').classList.toggle('hidden')" class="btn btn-primary">+ Tambah User</button>
+</div>
+
+<div id="formNew" class="card mb-6 hidden">
+  <form method="POST" action="/users" class="grid grid-cols-2 md:grid-cols-5 gap-3">
+    <input name="name" placeholder="Nama Lengkap" required class="form-input">
+    <input name="email" type="email" placeholder="Email" required class="form-input">
+    <input name="password" type="password" placeholder="Password" required class="form-input">
+    <select name="role" class="form-input">
+      <option value="owner">Owner</option>
+      <option value="admin">Admin/Keuangan</option>
+      <option value="kasir">Kasir</option>
+      <option value="gudang">Gudang</option>
+      <option value="produksi">Produksi</option>
+    </select>
+    <button class="btn btn-primary">Simpan</button>
+  </form>
+</div>
+
+<div class="card">
+  <table class="data-table w-full">
+    <thead><tr><th>Nama</th><th>Email</th><th>Role</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      <% users.forEach(u => { %>
+      <tr>
+        <td><%= u.name %></td>
+        <td><%= u.email %></td>
+        <td><span class="badge bg-slate-100 text-slate-700"><%= u.role %></span></td>
+        <td><span class="badge <%= u.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600' %>"><%= u.is_active ? 'Aktif' : 'Nonaktif' %></span></td>
+        <td>
+          <form method="POST" action="/users/<%= u.id %>/toggle">
+            <button class="btn btn-secondary"><%= u.is_active ? 'Nonaktifkan' : 'Aktifkan' %></button>
+          </form>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<%- include('partials/foot') %>

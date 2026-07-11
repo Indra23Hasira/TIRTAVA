@@ -1,0 +1,30 @@
+<%- include('partials/head', { title: 'Perangkat Aktif' }) %>
+<h1 class="text-xl font-bold mb-1">Perangkat Aktif</h1>
+<p class="text-slate-500 text-sm mb-6">Anda bisa login di beberapa perangkat sekaligus. Keluarkan perangkat yang tidak dikenal dari sini.</p>
+
+<div class="card">
+  <table class="data-table w-full">
+    <thead><tr><th>Perangkat</th><th>IP</th><th>Login Sejak</th><th>Terakhir Aktif</th><th></th></tr></thead>
+    <tbody>
+      <% sessions.forEach(s => { %>
+      <tr>
+        <td>
+          <%= s.device_name %>
+          <% if (s.id === currentSessionId) { %><span class="badge bg-green-100 text-green-700 ml-2">Perangkat ini</span><% } %>
+        </td>
+        <td><%= s.ip_address %></td>
+        <td><%= s.created_at %></td>
+        <td><%= s.last_active_at %></td>
+        <td>
+          <% if (s.id !== currentSessionId) { %>
+          <form method="POST" action="/account/devices/<%= s.id %>/revoke">
+            <button class="btn btn-danger">Keluarkan</button>
+          </form>
+          <% } %>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<%- include('partials/foot') %>

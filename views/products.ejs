@@ -1,0 +1,50 @@
+<%- include('partials/head', { title: 'Produk' }) %>
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-xl font-bold">Master Produk</h1>
+    <p class="text-slate-500 text-sm">Bahan baku, kemasan, dan barang jadi (air galon & es kristal)</p>
+  </div>
+  <button onclick="document.getElementById('formNew').classList.toggle('hidden')" class="btn btn-primary">+ Tambah Produk</button>
+</div>
+
+<div id="formNew" class="card mb-6 hidden">
+  <form method="POST" action="/products" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <input name="code" placeholder="Kode (mis. FG-004)" required class="form-input">
+    <input name="name" placeholder="Nama Produk" required class="form-input">
+    <select name="category" class="form-input">
+      <option value="air_galon">Air Galon</option>
+      <option value="es_kristal">Es Kristal</option>
+      <option value="bahan_baku">Bahan Baku</option>
+      <option value="kemasan">Kemasan</option>
+    </select>
+    <select name="type" class="form-input">
+      <option value="barang_jadi">Barang Jadi</option>
+      <option value="bahan_baku">Bahan Baku</option>
+    </select>
+    <input name="unit" placeholder="Satuan (pcs/liter/galon)" required class="form-input">
+    <input name="harga_jual" type="number" step="0.01" placeholder="Harga Jual" class="form-input">
+    <input name="stok_minimum" type="number" step="0.01" placeholder="Stok Minimum" class="form-input">
+    <button class="btn btn-primary">Simpan</button>
+  </form>
+</div>
+
+<div class="card">
+  <table class="data-table w-full">
+    <thead><tr><th>Kode</th><th>Nama</th><th>Kategori</th><th>Satuan</th><th>Harga Jual</th><th>HPP Rata²</th><th>Stok</th><th>Status</th></tr></thead>
+    <tbody>
+      <% products.forEach(p => { %>
+      <tr>
+        <td><%= p.code %></td>
+        <td><%= p.name %></td>
+        <td><%= p.category %></td>
+        <td><%= p.unit %></td>
+        <td>Rp <%= p.harga_jual.toLocaleString('id-ID') %></td>
+        <td>Rp <%= Math.round(p.hpp_rata2).toLocaleString('id-ID') %></td>
+        <td class="<%= p.stok <= p.stok_minimum ? 'text-red-600 font-semibold' : '' %>"><%= p.stok %></td>
+        <td><span class="badge <%= p.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500' %>"><%= p.is_active ? 'Aktif' : 'Nonaktif' %></span></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<%- include('partials/foot') %>
