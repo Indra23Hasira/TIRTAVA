@@ -7,7 +7,18 @@ const { db } = require('../db/db');
 const { JWT_SECRET, requireAuth } = require('../middleware/auth');
 
 router.get('/login', (req, res) => {
-  if (req.cookies?.token) return res.redirect('/');
+  const token = req.cookies?.token;
+  if (token) {
+    try {
+      const payload = jwt.verify(token, JWT_SECRET);
+      const session = db.prepare('SELECT * FROM sessions WHERE id = ? AND revoked = 0').get(payload.jti);
+      const user = db.prepare('SELECT * FROM users WHERE id = ? AND is_active = 1').get(payload.sub);
+      if (session && user) return res.redirect('/');
+    } catch (e) {
+      // token tidak valid, lanjut tampilkan halaman login
+    }
+    res.clearCookie('token'); // cookie basi/tidak valid -> bersihkan agar tidak loop
+  }
   res.render('login', { error: null });
 });
 
