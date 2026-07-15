@@ -30,7 +30,7 @@
 
 <div class="card">
   <table class="data-table w-full">
-    <thead><tr><th>Kode</th><th>Nama</th><th>Kategori</th><th>Satuan</th><th>Harga Jual</th><th>HPP Rata²</th><th>Stok</th><th>Status</th></tr></thead>
+    <thead><tr><th>Kode</th><th>Nama</th><th>Kategori</th><th>Satuan</th><th>Harga Jual</th><th>HPP Rata²</th><th>Stok</th><th>Status</th><th></th></tr></thead>
     <tbody>
       <% products.forEach(p => { %>
       <tr>
@@ -42,6 +42,31 @@
         <td>Rp <%= Math.round(p.hpp_rata2).toLocaleString('id-ID') %></td>
         <td class="<%= p.stok <= p.stok_minimum ? 'text-red-600 font-semibold' : '' %>"><%= p.stok %></td>
         <td><span class="badge <%= p.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500' %>"><%= p.is_active ? 'Aktif' : 'Nonaktif' %></span></td>
+        <td><button onclick="document.getElementById('edit<%= p.id %>').classList.toggle('hidden')" class="btn btn-secondary text-xs">Edit</button></td>
+      </tr>
+      <tr id="edit<%= p.id %>" class="hidden">
+        <td colspan="9" class="bg-slate-50">
+          <form method="POST" action="/products/<%= p.id %>/edit" class="flex flex-wrap gap-2 items-end p-3">
+            <div>
+              <label class="text-xs">Nama Produk</label>
+              <input name="name" value="<%= p.name %>" required class="form-input">
+            </div>
+            <div>
+              <label class="text-xs">Harga Jual</label>
+              <input name="harga_jual" type="number" step="0.01" value="<%= p.harga_jual %>" class="form-input">
+            </div>
+            <div>
+              <label class="text-xs">Stok Minimum</label>
+              <input name="stok_minimum" type="number" step="0.01" value="<%= p.stok_minimum %>" class="form-input">
+            </div>
+            <div>
+              <label class="text-xs flex items-center gap-1 mt-2">
+                <input type="checkbox" name="is_active" value="1" <%= p.is_active ? 'checked' : '' %>> Aktif
+              </label>
+            </div>
+            <button class="btn btn-primary">Simpan Perubahan</button>
+          </form>
+        </td>
       </tr>
       <% }) %>
     </tbody>
