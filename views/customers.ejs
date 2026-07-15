@@ -23,7 +23,7 @@
 
 <div class="card">
   <table class="data-table w-full">
-    <thead><tr><th>Kode</th><th>Nama</th><th>Telepon</th><th>Tipe</th><th>Saldo Piutang</th></tr></thead>
+    <thead><tr><th>Kode</th><th>Nama</th><th>Telepon</th><th>Tipe</th><th>Saldo Piutang</th><th></th></tr></thead>
     <tbody>
       <% customers.forEach(c => { %>
       <tr>
@@ -32,6 +32,38 @@
         <td><%= c.phone %></td>
         <td><span class="badge bg-blue-100 text-blue-700"><%= c.tipe %></span></td>
         <td class="<%= c.saldo_piutang > 0 ? 'text-amber-600 font-semibold' : '' %>">Rp <%= c.saldo_piutang.toLocaleString('id-ID') %></td>
+        <td><button onclick="document.getElementById('edit<%= c.id %>').classList.toggle('hidden')" class="btn btn-secondary text-xs">Edit</button></td>
+      </tr>
+      <tr id="edit<%= c.id %>" class="hidden">
+        <td colspan="6" class="bg-slate-50">
+          <form method="POST" action="/customers/<%= c.id %>/edit" class="flex flex-wrap gap-2 items-end p-3">
+            <div>
+              <label class="text-xs">Nama</label>
+              <input name="name" value="<%= c.name %>" required class="form-input">
+            </div>
+            <div>
+              <label class="text-xs">Telepon</label>
+              <input name="phone" value="<%= c.phone || '' %>" class="form-input">
+            </div>
+            <div>
+              <label class="text-xs">Alamat</label>
+              <input name="address" value="<%= c.address || '' %>" class="form-input">
+            </div>
+            <div>
+              <label class="text-xs">Tipe</label>
+              <select name="tipe" class="form-input">
+                <option value="reguler" <%= c.tipe === 'reguler' ? 'selected' : '' %>>Reguler</option>
+                <option value="agen" <%= c.tipe === 'agen' ? 'selected' : '' %>>Agen</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs flex items-center gap-1 mt-2">
+                <input type="checkbox" name="is_active" value="1" <%= c.is_active ? 'checked' : '' %>> Aktif
+              </label>
+            </div>
+            <button class="btn btn-primary">Simpan Perubahan</button>
+          </form>
+        </td>
       </tr>
       <% }) %>
     </tbody>
