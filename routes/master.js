@@ -39,6 +39,13 @@ router.post('/customers', (req, res) => {
   res.redirect('/customers');
 });
 
+router.post('/customers/:id/edit', (req, res) => {
+  const { name, phone, address, tipe, is_active } = req.body;
+  db.prepare(`UPDATE customers SET name=?, phone=?, address=?, tipe=?, is_active=? WHERE id=?`)
+    .run(name, phone, address, tipe, is_active ? 1 : 0, req.params.id);
+  res.redirect('/customers');
+});
+
 // ---------------- SUPPLIER ----------------
 router.get('/suppliers', (req, res) => {
   const suppliers = db.prepare('SELECT * FROM suppliers ORDER BY name').all();
@@ -49,6 +56,13 @@ router.post('/suppliers', (req, res) => {
   const { code, name, phone, address } = req.body;
   db.prepare('INSERT INTO suppliers (code, name, phone, address) VALUES (?,?,?,?)')
     .run(code, name, phone, address);
+  res.redirect('/suppliers');
+});
+
+router.post('/suppliers/:id/edit', (req, res) => {
+  const { name, phone, address, is_active } = req.body;
+  db.prepare(`UPDATE suppliers SET name=?, phone=?, address=?, is_active=? WHERE id=?`)
+    .run(name, phone, address, is_active ? 1 : 0, req.params.id);
   res.redirect('/suppliers');
 });
 
