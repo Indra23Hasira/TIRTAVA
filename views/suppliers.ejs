@@ -19,7 +19,7 @@
 
 <div class="card">
   <table class="data-table w-full">
-    <thead><tr><th>Kode</th><th>Nama</th><th>Telepon</th><th>Saldo Hutang</th></tr></thead>
+    <thead><tr><th>Kode</th><th>Nama</th><th>Telepon</th><th>Saldo Hutang</th><th></th></tr></thead>
     <tbody>
       <% suppliers.forEach(s => { %>
       <tr>
@@ -27,6 +27,31 @@
         <td><%= s.name %></td>
         <td><%= s.phone %></td>
         <td class="<%= s.saldo_hutang > 0 ? 'text-red-600 font-semibold' : '' %>">Rp <%= s.saldo_hutang.toLocaleString('id-ID') %></td>
+        <td><button onclick="document.getElementById('edit<%= s.id %>').classList.toggle('hidden')" class="btn btn-secondary text-xs">Edit</button></td>
+      </tr>
+      <tr id="edit<%= s.id %>" class="hidden">
+        <td colspan="5" class="bg-slate-50">
+          <form method="POST" action="/suppliers/<%= s.id %>/edit" class="flex flex-wrap gap-2 items-end p-3">
+            <div>
+              <label class="text-xs">Nama</label>
+              <input name="name" value="<%= s.name %>" required class="form-input">
+            </div>
+            <div>
+              <label class="text-xs">Telepon</label>
+              <input name="phone" value="<%= s.phone || '' %>" class="form-input">
+            </div>
+            <div>
+              <label class="text-xs">Alamat</label>
+              <input name="address" value="<%= s.address || '' %>" class="form-input">
+            </div>
+            <div>
+              <label class="text-xs flex items-center gap-1 mt-2">
+                <input type="checkbox" name="is_active" value="1" <%= s.is_active ? 'checked' : '' %>> Aktif
+              </label>
+            </div>
+            <button class="btn btn-primary">Simpan Perubahan</button>
+          </form>
+        </td>
       </tr>
       <% }) %>
     </tbody>
